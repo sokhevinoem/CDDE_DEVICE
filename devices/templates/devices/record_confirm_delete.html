@@ -1,0 +1,26 @@
+{% extends "devices/base.html" %}
+{% block title %}លុបកំណត់ត្រា{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card shadow-soft" style="max-width: 520px; width: 100%;">
+        <div class="card-body p-4 p-md-5 text-center">
+            <div class="mx-auto mb-3 rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center"
+                style="width:64px;height:64px;">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+            </div>
+            <h4 class="mb-3">តើអ្នកប្រាកដជាចង់លុបកំណត់ត្រានេះមែនទេ?</h4>
+            <p class="text-muted">{{ record.borrowed_by }} — {{ record.device.device_name }} ({{ record.borrow_date }})</p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-trash me-1"></i>លុបចោលជាស្ថាពរ
+                    </button>
+                    <a href="{% url 'record_list' %}" class="btn btn-outline-secondary">បោះបង់</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

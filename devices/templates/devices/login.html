@@ -1,0 +1,43 @@
+{% extends "devices/base.html" %}
+{% block title %}ចូលគណនី Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card shadow-soft p-4 p-md-5" style="max-width: 420px; width: 100%;">
+        <div class="text-center mb-4">
+            <div class="mx-auto mb-3 rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                style="width:64px;height:64px;">
+                <i class="bi bi-shield-lock-fill text-primary fs-3"></i>
+            </div>
+            <h3 class="section-title mb-1">ចូលគណនី Admin</h3>
+            <p class="text-muted small mb-0">សម្រាប់គ្រប់គ្រង Dashboard ឧបករណ៍ កំណត់ត្រា និងរបាយការណ៍</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>ឈ្មោះគណនី ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវទេ។
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="mb-3">
+                <label class="field-label">ឈ្មោះគណនី</label>
+                <input type="text" name="username" class="form-control" required autofocus>
+            </div>
+            <div class="mb-4">
+                <label class="field-label">ពាក្យសម្ងាត់</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-brand btn-lg w-100">
+                <i class="bi bi-box-arrow-in-right me-1"></i>ចូលគណនី
+            </button>
+        </form>
+
+        <a href="{% url 'public_status' %}" class="btn btn-link text-decoration-none mt-3">
+            <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅទំព័រដើម
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "devices/base.html" %}
+{% load devices_extras %}
+{% block title %}ស្ថានភាពឧបករណ៍{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="section-title mb-1">ស្ថានភាពឧបករណ៍ទាំងអស់</h3>
+        <p class="text-muted mb-0 small">មើលថាមានឧបករណ៍អ្វីខ្លះនៅសល់ និងអ្នកណាកំពុងខ្ចីអ្វី</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'borrow_device' %}" class="btn btn-brand">
+            <i class="bi bi-box-arrow-up-right me-1"></i>ស្នើសុំខ្ចី
+        </a>
+        <a href="{% url 'borrow_list_return' %}" class="btn btn-outline-success">
+            <i class="bi bi-box-arrow-in-down-left me-1"></i>សងឧបករណ៍
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-soft h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">ទំនេរ (អាចខ្ចីបាន)</div>
+                <div class="fs-2 fw-bold text-success">{{ device_counts.available }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-soft h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">កំពុងខ្ចី</div>
+                <div class="fs-2 fw-bold text-primary">{{ device_counts.borrowed }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-soft h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">រង់ចាំការអនុម័ត</div>
+                <div class="fs-2 fw-bold text-warning">{{ device_counts.reserved }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-soft h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">កំពុងជួសជុល</div>
+                <div class="fs-2 fw-bold text-danger">{{ device_counts.maintenance }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-soft mb-4">
+    <div class="card-header bg-white border-0 pt-3 px-4">
+        <h5 class="mb-0"><i class="bi bi-people-fill text-primary me-2"></i>កំពុងខ្ចីដោយអ្នកណា</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ឧបករណ៍</th>
+                        <th>អ្នកខ្ចី</th>
+                        <th>ថ្ងៃខ្ចី</th>
+                        <th class="pe-3">ថ្ងៃរំពឹងសង</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in active_borrows %}
+                    <tr class="{% if item.is_overdue_flag %}table-danger{% endif %}">
+                        <td class="ps-3">{{ item.device.device_name }}</td>
+                        <td>{{ item.borrowed_by }}</td>
+                        <td>{{ item.borrow_date }}</td>
+                        <td class="pe-3">
+                            {% if item.expected_return_date %}
+                            {{ item.expected_return_date }}
+                            {% if item.is_overdue_flag %}<span class="badge bg-danger ms-1">លើសកំណត់</span>{% endif %}
+                            {% else %}
+                            <span class="text-muted">មិនទាន់ប្រាកដ</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center text-muted p-4">មិនមានឧបករណ៍កំពុងខ្ចីទេ</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<form method="GET" class="mb-3">
+    <div class="input-group shadow-soft" style="max-width: 420px;">
+        <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-0"
+            placeholder="ស្វែងរកឧបករណ៍...">
+        <button class="btn btn-brand" type="submit">ស្វែងរក</button>
+    </div>
+</form>
+
+<div class="card shadow-soft">
+    <div class="card-header bg-white border-0 pt-3 px-4">
+        <h5 class="mb-0"><i class="bi bi-hdd-stack-fill text-primary me-2"></i>បញ្ជីឧបករណ៍ទាំងអស់</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th></th>
+                        <th class="ps-3">ឈ្មោះឧបករណ៍</th>
+                        <th>ម៉ូឌែល</th>
+                        <th>ទំហំផ្ទុក</th>
+                        <th class="pe-3">ស្ថានភាព</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for device in devices %}
+                    <tr>
+                        <td class="ps-3">
+                            {% if device.device_image %}
+                            <img src="{{ device.device_image.url }}" alt="" class="rounded border"
+                                style="width:40px;height:40px;object-fit:cover;">
+                            {% else %}
+                            <div class="rounded border d-flex align-items-center justify-content-center text-muted"
+                                style="width:40px;height:40px;">
+                                <i class="bi bi-hdd"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ device.device_name }}</td>
+                        <td>{{ device.model|default:"-" }}</td>
+                        <td>{{ device.capacity|default:"-" }}</td>
+                        <td class="pe-3"><span class="badge badge-status {{ device.status|device_status_badge }}">{{ device.get_status_display }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted p-4">មិនមានឧបករណ៍ត្រូវនឹងការស្វែងរកនេះទេ</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

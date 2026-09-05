@@ -1,0 +1,91 @@
+{% extends "devices/base.html" %}
+{% load devices_extras %}
+{% block title %}បញ្ជីឧបករណ៍ដែលកំពុងខ្ចី{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="section-title mb-1">ជ្រើសរើសទិន្នន័យដើម្បីប្រគល់ឧបករណ៍សងវិញ</h3>
+        <p class="text-muted mb-0 small">
+            មានឧបករណ៍កំពុងខ្ចីសរុប {{ borrows|length }}
+            {% if overdue_count %}
+            &middot; <span class="text-danger fw-semibold"><i class="bi bi-exclamation-triangle-fill"></i> លើសកំណត់ {{ overdue_count }}</span>
+            {% endif %}
+        </p>
+    </div>
+    <a href="{% url 'borrow_device' %}" class="btn btn-brand">
+        <i class="bi bi-plus-lg me-1"></i>ស្នើសុំខ្ចីថ្មី
+    </a>
+</div>
+
+<form method="GET" class="mb-4">
+    <div class="input-group shadow-soft">
+        <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-0"
+            placeholder="ស្វែងរកតាមឈ្មោះបុគ្គលិក ឬឈ្មោះឧបករណ៍...">
+        <button class="btn btn-brand" type="submit">ស្វែងរក</button>
+        {% if query %}
+        <a href="{% url 'borrow_list_return' %}" class="btn btn-outline-secondary">សម្អាត</a>
+        {% endif %}
+    </div>
+</form>
+
+<div class="card shadow-soft">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ឈ្មោះឧបករណ៍</th>
+                        <th>អ្នកខ្ចី</th>
+                        <th>ថ្ងៃខ្ចី</th>
+                        <th>ថ្ងៃត្រូវសង (រំពឹងទុក)</th>
+                        <th>ស្ថានភាព</th>
+                        <th class="text-end pe-3">សកម្មភាព</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in borrows %}
+                    <tr class="{% if item.is_overdue_flag %}table-danger{% endif %}">
+                        <td class="ps-3"><strong>{{ item.device.device_name }}</strong></td>
+                        <td>{{ item.borrowed_by }}</td>
+                        <td>{{ item.borrow_date }}</td>
+                        <td>
+                            {% if item.expected_return_date %}
+                            {{ item.expected_return_date }}
+                            {% if item.is_overdue_flag %}
+                            <span class="badge badge-status bg-danger ms-1">លើសកំណត់</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="badge badge-status bg-warning text-dark">មិនទាន់ប្រាកដ</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge badge-status {{ item.borrow_status|borrow_status_badge }}">{{ item.get_borrow_status_display }}</span></td>
+                        <td class="text-end pe-3">
+                            {% if item.borrow_status == 'Borrowed' %}
+                            <a href="{% url 'return_device' item.pk %}" class="btn btn-sm btn-success">
+                                <i class="bi bi-box-arrow-in-down-left me-1"></i>សងឧបករណ៍វិញ
+                            </a>
+                            {% else %}
+                            <span class="text-muted small"><i class="bi bi-hourglass-split me-1"></i>រង់ចាំ Admin បញ្ជាក់</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted p-5">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            {% if query %}
+                            មិនមានលទ្ធផលសម្រាប់ "{{ query }}" ឡើយ
+                            {% else %}
+                            មិនមានទិន្នន័យកំពុងខ្ចីឡើយ
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

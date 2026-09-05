@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ប្រព័ន្ធគ្រប់គ្រងការខ្ចីឧបករណ៍{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --brand: #2f5fd6;
+            --brand-dark: #24409c;
+            --surface: #f4f6fb;
+        }
+
+        body {
+            background-color: var(--surface);
+            font-family: 'Kantumruy Pro', 'Khmer OS Battambang', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: .2px;
+        }
+
+        .navbar-app {
+            background: linear-gradient(90deg, var(--brand), var(--brand-dark));
+        }
+
+        .navbar-app .nav-link {
+            color: rgba(255, 255, 255, .85);
+            font-weight: 500;
+        }
+
+        .navbar-app .nav-link.active,
+        .navbar-app .nav-link:hover {
+            color: #fff;
+        }
+
+        .app-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 28px 16px 56px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 14px;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 6px 24px rgba(31, 45, 90, 0.08);
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-brand {
+            background-color: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+        }
+
+        .btn-brand:hover {
+            background-color: var(--brand-dark);
+            border-color: var(--brand-dark);
+            color: #fff;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 .2rem rgba(47, 95, 214, .15);
+        }
+
+        .badge-status {
+            padding: .45em .8em;
+            font-weight: 600;
+            border-radius: 999px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #1f2d5a;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: #334066;
+            margin-bottom: .35rem;
+        }
+
+        .invalid-feedback {
+            display: block;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-app navbar-dark mb-4">
+        <div class="container app-shell py-0" style="max-width: 980px;">
+            <a class="navbar-brand" href="{% url 'public_status' %}">
+                <i class="bi bi-hdd-stack-fill me-2"></i>ឧបករណ៍ការិយាល័យ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'status' %}active{% endif %}"
+                            href="{% url 'public_status' %}">
+                            <i class="bi bi-hdd-stack me-1"></i>ស្ថានភាពឧបករណ៍
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'borrow' %}active{% endif %}"
+                            href="{% url 'borrow_device' %}">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>ស្នើសុំខ្ចី
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'return' %}active{% endif %}"
+                            href="{% url 'borrow_list_return' %}">
+                            <i class="bi bi-box-arrow-in-down-left me-1"></i>សងឧបករណ៍
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><span class="nav-link px-1 opacity-50">|</span></li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'dashboard' %}active{% endif %}"
+                            href="{% url 'dashboard' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'devices' %}active{% endif %}"
+                            href="{% url 'device_list' %}">
+                            <i class="bi bi-hdd-stack-fill me-1"></i>គ្រប់គ្រងឧបករណ៍
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'records' %}active{% endif %}"
+                            href="{% url 'record_list' %}">
+                            <i class="bi bi-journal-text me-1"></i>កំណត់ត្រា
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if active_nav == 'reports' %}active{% endif %}"
+                            href="{% url 'reports' %}">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>របាយការណ៍
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-light">
+                                <i class="bi bi-box-arrow-right me-1"></i>{{ user.username }} &middot; ចេញ
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-sm btn-light" href="{% url 'login' %}">
+                            <i class="bi bi-shield-lock-fill me-1"></i>Admin Login
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-shell">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} d-flex align-items-center shadow-soft"
+            role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <div>{{ message }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

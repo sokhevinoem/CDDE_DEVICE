@@ -1,0 +1,52 @@
+{% extends "devices/base.html" %}
+{% block title %}{% if is_new %}បន្ថែមឧបករណ៍{% else %}កែប្រែឧបករណ៍{% endif %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card shadow-soft" style="max-width: 560px; width: 100%;">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="section-title mb-4">
+                {% if is_new %}
+                <i class="bi bi-plus-circle-fill text-primary me-2"></i>បន្ថែមឧបករណ៍ថ្មី
+                {% else %}
+                <i class="bi bi-pencil-square text-primary me-2"></i>កែប្រែឧបករណ៍៖ {{ device.device_name }}
+                {% endif %}
+            </h3>
+
+            {% if not is_new and device.device_image %}
+            <div class="text-center mb-3">
+                <img src="{{ device.device_image.url }}" alt="{{ device.device_name }}"
+                    class="img-fluid rounded shadow-sm" style="max-height: 180px;">
+                <div class="form-text">រូបភាពបច្ចុប្បន្ន — ជ្រើសរើសរូបភាពថ្មីខាងក្រោមប្រសិនបើចង់ប្តូរ</div>
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="field-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="invalid-feedback d-block text-danger small">{{ field.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors|join:", " }}</div>
+                {% endif %}
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-brand btn-lg">
+                        <i class="bi bi-check2-circle me-1"></i>រក្សាទុក
+                    </button>
+                    <a href="{% url 'device_list' %}" class="btn btn-link text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ក្រោយ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

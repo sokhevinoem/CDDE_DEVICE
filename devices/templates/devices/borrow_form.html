@@ -1,0 +1,133 @@
+{% extends "devices/base.html" %}
+{% block title %}ស្នើសុំខ្ចីឧបករណ៍{% endblock %}
+
+{% block content %}
+<div class="card shadow-soft">
+    <div class="card-body p-4 p-md-5">
+        <div class="d-flex align-items-center mb-4">
+            <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3"
+                style="width:48px;height:48px;">
+                <i class="bi bi-box-arrow-up-right text-primary fs-4"></i>
+            </div>
+            <div>
+                <h3 class="section-title mb-0">ទម្រង់ស្នើសុំខ្ចីឧបករណ៍ផ្ទុកទិន្នន័យ</h3>
+                <p class="text-muted mb-0 small">សូមបំពេញព័ត៌មានខាងក្រោមឱ្យបានច្បាស់លាស់ សំណើនឹងត្រូវរង់ចាំការអនុម័តពី Admin សិន</p>
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="field-label">{{ form.device.label }}</label>
+                {{ form.device }}
+                {% if form.device.errors %}
+                <div class="invalid-feedback d-block text-danger small">{{ form.device.errors|join:", " }}</div>
+                {% endif %}
+                {% if not form.device.field.queryset.exists %}
+                <div class="form-text text-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    មិនមានឧបករណ៍ណាទំនេរឥឡូវនេះទេ សូមព្យាយាមម្តងទៀតពេលក្រោយ។
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="field-label">{{ form.borrowed_by.label }}</label>
+                {{ form.borrowed_by }}
+                {% if form.borrowed_by.errors %}
+                <div class="invalid-feedback d-block text-danger small">{{ form.borrowed_by.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="field-label">{{ form.borrower_type.label }}</label>
+                {{ form.borrower_type }}
+            </div>
+
+            <div class="mb-3">
+                <label class="field-label">{{ form.borrower_image.label }}</label>
+                {{ form.borrower_image }}
+                <div class="form-text">អាចភ្ជាប់រូបថតអ្នកខ្ចី ដើម្បីងាយស្រួលសម្គាល់ (មិនចាំបាច់ក៏បាន)</div>
+                {% if form.borrower_image.errors %}
+                <div class="invalid-feedback d-block text-danger small">{{ form.borrower_image.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="field-label">{{ form.borrow_date.label }}</label>
+                    {{ form.borrow_date }}
+                    {% if form.borrow_date.errors %}
+                    <div class="invalid-feedback d-block text-danger small">{{ form.borrow_date.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="field-label">{{ form.expected_return_date.label }}</label>
+                    {{ form.expected_return_date }}
+                    <div class="form-check mt-2">
+                        {{ form.not_sure_return_date }}
+                        <label class="form-check-label text-muted small" for="notSureCheckbox">
+                            {{ form.not_sure_return_date.label }}
+                        </label>
+                    </div>
+                    {% if form.expected_return_date.errors %}
+                    <div class="invalid-feedback d-block text-danger small">{{ form.expected_return_date.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="field-label">{{ form.reason.label }}</label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                <div class="invalid-feedback d-block text-danger small">{{ form.reason.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="field-label">{{ form.other_notes.label }}</label>
+                {{ form.other_notes }}
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors|join:", " }}</div>
+            {% endif %}
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-brand btn-lg">
+                    <i class="bi bi-send-fill me-1"></i>រក្សាទុកការស្នើសុំ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const checkbox = document.getElementById('notSureCheckbox');
+    const returnDateField = document.getElementById('returnDateField');
+    const borrowDateField = document.querySelector('input[name="borrow_date"]');
+
+    function syncReturnDateMin() {
+        if (borrowDateField && borrowDateField.value) {
+            returnDateField.min = borrowDateField.value;
+        }
+    }
+
+    if (borrowDateField) {
+        borrowDateField.addEventListener('change', syncReturnDateMin);
+        syncReturnDateMin();
+    }
+
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            returnDateField.value = '';
+            returnDateField.disabled = true;
+        } else {
+            returnDateField.disabled = false;
+        }
+    });
+</script>
+{% endblock %}

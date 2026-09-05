@@ -1,0 +1,181 @@
+{% extends "devices/base.html" %}
+{% load devices_extras %}
+{% block title %}លម្អិតកំណត់ត្រា{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="section-title mb-1">លម្អិតកំណត់ត្រា</h3>
+        <p class="text-muted mb-0 small">{{ record.device.device_name }} — {{ record.borrowed_by }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'record_edit' record.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-pencil-square me-1"></i>កែប្រែ
+        </a>
+        <a href="{% url 'record_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ក្រោយ
+        </a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-soft h-100">
+            <div class="card-header bg-white border-0 pt-3 px-4">
+                <h6 class="mb-0 text-muted"><i class="bi bi-person-badge-fill text-primary me-2"></i>រូបភាពអ្នកខ្ចី</h6>
+            </div>
+            <div class="card-body px-4 pb-4 text-center">
+                {% if record.borrower_image %}
+                <a href="{{ record.borrower_image.url }}" target="_blank">
+                    <img src="{{ record.borrower_image.url }}" class="img-fluid rounded shadow-sm" style="max-height: 260px;" alt="រូបភាពអ្នកខ្ចី">
+                </a>
+                {% else %}
+                <div class="text-muted py-5">
+                    <i class="bi bi-person-circle fs-1 d-block mb-2"></i>មិនមានរូបភាពទេ
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-soft h-100">
+            <div class="card-header bg-white border-0 pt-3 px-4">
+                <h6 class="mb-0 text-muted"><i class="bi bi-image-fill text-primary me-2"></i>រូបភាពពេលសង</h6>
+            </div>
+            <div class="card-body px-4 pb-4 text-center">
+                {% if record.return_image %}
+                <a href="{{ record.return_image.url }}" target="_blank">
+                    <img src="{{ record.return_image.url }}" class="img-fluid rounded shadow-sm" style="max-height: 260px;" alt="រូបភាពពេលសង">
+                </a>
+                {% else %}
+                <div class="text-muted py-5">
+                    <i class="bi bi-image fs-1 d-block mb-2"></i>
+                    {% if has_return_info %}មិនបានភ្ជាប់រូបភាពទេ{% else %}មិនទាន់មានទិន្នន័យសងទេ{% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-soft">
+    <div class="card-header bg-white border-0 pt-3 px-4 d-flex align-items-center justify-content-between">
+        <h5 class="mb-0"><i class="bi bi-info-circle-fill text-primary me-2"></i>ព័ត៌មានពេញលេញ</h5>
+        <span class="badge badge-status {{ record.borrow_status|borrow_status_badge }}">{{ record.get_borrow_status_display }}</span>
+    </div>
+    <div class="card-body px-4 pb-4">
+
+        <h6 class="text-uppercase text-muted small fw-bold mt-2 mb-3"><i class="bi bi-hdd-stack-fill me-1"></i>ឧបករណ៍</h6>
+        <table class="table table-borderless mb-0">
+            <tbody>
+                <tr>
+                    <th class="text-muted fw-normal" style="width: 32%;">ឈ្មោះឧបករណ៍</th>
+                    <td class="fw-semibold">{{ record.device.device_name }} {% if record.device.capacity %}({{ record.device.capacity }}){% endif %}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">ម៉ូឌែល / លេខស៊េរី</th>
+                    <td>{{ record.device.model|default:"-" }} / {{ record.device.serial_number|default:"-" }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <h6 class="text-uppercase text-muted small fw-bold mb-3"><i class="bi bi-send-fill me-1"></i>ពេលស្នើសុំ / ពេលខ្ចី</h6>
+        <table class="table table-borderless mb-0">
+            <tbody>
+                <tr>
+                    <th class="text-muted fw-normal" style="width: 32%;">អ្នកខ្ចី</th>
+                    <td>{{ record.borrowed_by }} <span class="badge bg-light text-dark border ms-1">{{ record.get_borrower_type_display }}</span></td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">ថ្ងៃស្នើសុំ</th>
+                    <td>{{ record.requested_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">ថ្ងៃខ្ចី</th>
+                    <td>{{ record.borrow_date }}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">ថ្ងៃរំពឹងថានឹងសង</th>
+                    <td>{{ record.expected_return_date|default:"មិនទាន់ប្រាកដ" }}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">មូលហេតុខ្ចី</th>
+                    <td>{{ record.reason|default:"-"|linebreaksbr }}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">កំណត់សម្គាល់ (ពេលស្នើសុំ)</th>
+                    <td>{{ record.other_notes|default:"-"|linebreaksbr }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <h6 class="text-uppercase text-muted small fw-bold mb-3"><i class="bi bi-box-arrow-in-down-left me-1"></i>ពេលសង</h6>
+        {% if has_return_info %}
+        <table class="table table-borderless mb-0">
+            <tbody>
+                <tr>
+                    <th class="text-muted fw-normal" style="width: 32%;">ថ្ងៃសងជាក់ស្តែង</th>
+                    <td class="fw-semibold">{{ record.actual_return_date|default:"រង់ចាំបញ្ជាក់" }}</td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">ស្ថានភាពឧបករណ៍ពេលសង</th>
+                    <td>
+                        {% if record.return_condition == 'Damaged' %}
+                        <span class="badge bg-danger">{{ record.get_return_condition_display }}</span>
+                        {% else %}
+                        <span class="badge bg-success">{{ record.get_return_condition_display }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-muted fw-normal">កំណត់សម្គាល់ (ពេលសង)</th>
+                    <td>{{ record.return_notes|default:"-"|linebreaksbr }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted mb-0"><i class="bi bi-hourglass me-1"></i>មិនទាន់មានទិន្នន័យសងទេ — ឧបករណ៍នេះមិនទាន់ត្រូវបានប្រគល់សងវិញនៅឡើយ។</p>
+        {% endif %}
+
+        {% if record.admin_note %}
+        <hr>
+        <h6 class="text-uppercase text-muted small fw-bold mb-3"><i class="bi bi-shield-fill me-1"></i>មតិយោបល់ Admin</h6>
+        <p class="mb-0">{{ record.admin_note|linebreaksbr }}</p>
+        {% endif %}
+
+        {% if record.borrow_status == 'Pending' %}
+        <hr>
+        <div class="d-flex gap-2">
+            <form method="POST" action="{% url 'approve_borrow' record.pk %}" class="flex-fill">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'record_detail' record.pk %}">
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-lg me-1"></i>អនុម័តការខ្ចី</button>
+            </form>
+            <form method="POST" action="{% url 'reject_borrow' record.pk %}" class="flex-fill"
+                onsubmit="return confirm('តើអ្នកប្រាកដថាចង់បដិសេធសំណើនេះមែនទេ?');">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'record_detail' record.pk %}">
+                <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-x-lg me-1"></i>បដិសេធ</button>
+            </form>
+        </div>
+        {% elif record.borrow_status == 'PendingReturn' %}
+        <hr>
+        <div class="d-flex gap-2">
+            <form method="POST" action="{% url 'approve_return' record.pk %}" class="flex-fill">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'record_detail' record.pk %}">
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-lg me-1"></i>បញ្ជាក់ការសង</button>
+            </form>
+            <form method="POST" action="{% url 'reject_return' record.pk %}" class="flex-fill"
+                onsubmit="return confirm('តើអ្នកចង់ផ្ញើសំណើសងនេះត្រឡប់ទៅអ្នកខ្ចីវិញ ដើម្បីដាក់ស្នើម្តងទៀតឬទេ?');">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'record_detail' record.pk %}">
+                <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-arrow-counterclockwise me-1"></i>ផ្ញើត្រឡប់វិញ</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

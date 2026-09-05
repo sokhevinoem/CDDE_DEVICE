@@ -1,0 +1,32 @@
+{% extends "devices/base.html" %}
+{% block title %}លុបឧបករណ៍{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card shadow-soft" style="max-width: 520px; width: 100%;">
+        <div class="card-body p-4 p-md-5 text-center">
+            <div class="mx-auto mb-3 rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center"
+                style="width:64px;height:64px;">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+            </div>
+            <h4 class="mb-3">តើអ្នកប្រាកដជាចង់លុប "{{ device.device_name }}" មែនទេ?</h4>
+            {% if related_count %}
+            <div class="alert alert-warning text-start">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                ឧបករណ៍នេះមានប្រវត្តិខ្ចី/សង {{ related_count }} កំណត់ត្រា ។ ការលុបឧបករណ៍នេះនឹង
+                <strong>លុបប្រវត្តិខ្ចី-សងទាំងអស់ជាប់</strong> ផងដែរ ហើយមិនអាចត្រឡប់វិញបានទេ។
+            </div>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-trash me-1"></i>លុបចោលជាស្ថាពរ
+                    </button>
+                    <a href="{% url 'device_list' %}" class="btn btn-outline-secondary">បោះបង់</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

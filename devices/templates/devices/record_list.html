@@ -1,0 +1,107 @@
+{% extends "devices/base.html" %}
+{% load devices_extras %}
+{% block title %}កំណត់ត្រាខ្ចី-សងទាំងអស់{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="section-title mb-1">កំណត់ត្រាខ្ចី-សងទាំងអស់</h3>
+        <p class="text-muted mb-0 small">មានកំណត់ត្រាសរុប {{ page_obj.paginator.count }}</p>
+    </div>
+    <a href="{% url 'reports' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-file-earmark-pdf me-1"></i>របាយការណ៍ / PDF
+    </a>
+</div>
+
+<form method="GET" class="row g-2 mb-4">
+    <div class="col-md-6">
+        <div class="input-group shadow-soft">
+            <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+            <input type="text" name="q" value="{{ query|default:'' }}" class="form-control border-0"
+                placeholder="ស្វែងរកតាមឈ្មោះ ឬឧបករណ៍...">
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">-- ស្ថានភាពទាំងអស់ --</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="type" class="form-select" onchange="this.form.submit()">
+            <option value="">-- ប្រភេទទាំងអស់ --</option>
+            {% for value, label in type_choices %}
+            <option value="{{ value }}" {% if type_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-brand w-100" type="submit"><i class="bi bi-funnel"></i></button>
+    </div>
+</form>
+
+<div class="card shadow-soft">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ឧបករណ៍</th>
+                        <th>អ្នកខ្ចី</th>
+                        <th>ប្រភេទ</th>
+                        <th>ថ្ងៃខ្ចី</th>
+                        <th>ថ្ងៃសង</th>
+                        <th>ស្ថានភាព</th>
+                        <th class="text-end pe-3">សកម្មភាព</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_obj %}
+                    <tr>
+                        <td class="ps-3">{{ item.device.device_name }}</td>
+                        <td>{{ item.borrowed_by }}</td>
+                        <td>{{ item.get_borrower_type_display }}</td>
+                        <td>{{ item.borrow_date }}</td>
+                        <td>{{ item.actual_return_date|default:"-" }}</td>
+                        <td><span class="badge badge-status {{ item.borrow_status|borrow_status_badge }}">{{ item.get_borrow_status_display }}</span></td>
+                        <td class="text-end pe-3">
+                            <a href="{% url 'record_detail' item.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a href="{% url 'record_edit' item.pk %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'record_delete' item.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted p-5">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>មិនមានកំណត់ត្រាត្រូវនឹងលក្ខខណ្ឌនេះទេ
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="mt-3">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">&laquo;</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">ទំព័រ {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

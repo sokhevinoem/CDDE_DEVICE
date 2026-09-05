@@ -1,0 +1,115 @@
+{% extends "devices/base.html" %}
+{% load devices_extras %}
+{% block title %}លម្អិតការស្នើសុំខ្ចី{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="section-title mb-1">លម្អិតការស្នើសុំខ្ចី</h3>
+        <p class="text-muted mb-0 small">{{ record.device.device_name }} — {{ record.borrowed_by }}</p>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>ត្រឡប់ទៅ Dashboard
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-soft h-100">
+            <div class="card-header bg-white border-0 pt-3 px-4">
+                <h5 class="mb-0"><i class="bi bi-person-badge-fill text-primary me-2"></i>រូបភាពអ្នកខ្ចី</h5>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% if record.borrower_image %}
+                <a href="{{ record.borrower_image.url }}" target="_blank">
+                    <img src="{{ record.borrower_image.url }}" class="img-fluid rounded shadow-sm" alt="រូបភាពអ្នកខ្ចី">
+                </a>
+                <p class="text-muted small mt-2 mb-0"><i class="bi bi-arrows-fullscreen me-1"></i>ចុចលើរូបភាពដើម្បីមើលពេញទំហំ</p>
+                {% else %}
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-person-circle fs-1 d-block mb-2"></i>
+                    អ្នកខ្ចីមិនបានភ្ជាប់រូបភាពមកជាមួយទេ
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card shadow-soft h-100">
+            <div class="card-header bg-white border-0 pt-3 px-4 d-flex align-items-center justify-content-between">
+                <h5 class="mb-0"><i class="bi bi-info-circle-fill text-primary me-2"></i>ព័ត៌មានលម្អិត</h5>
+                <span class="badge badge-status {{ record.borrow_status|borrow_status_badge }}">{{ record.get_borrow_status_display }}</span>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <table class="table table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th class="text-muted fw-normal" style="width: 40%;">ឧបករណ៍</th>
+                            <td class="fw-semibold">{{ record.device.device_name }} {% if record.device.capacity %}({{ record.device.capacity }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">ម៉ូឌែល / លេខស៊េរី</th>
+                            <td>{{ record.device.model|default:"-" }} / {{ record.device.serial_number|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">អ្នកខ្ចី</th>
+                            <td>{{ record.borrowed_by }} <span class="badge bg-light text-dark border ms-1">{{ record.get_borrower_type_display }}</span></td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">ថ្ងៃស្នើសុំ</th>
+                            <td>{{ record.requested_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">ថ្ងៃខ្ចី</th>
+                            <td>{{ record.borrow_date }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">ថ្ងៃរំពឹងថានឹងសង</th>
+                            <td>{{ record.expected_return_date|default:"មិនទាន់ប្រាកដ" }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">មូលហេតុខ្ចី</th>
+                            <td>{{ record.reason|default:"-"|linebreaksbr }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted fw-normal">កំណត់សម្គាល់</th>
+                            <td>{{ record.other_notes|default:"-"|linebreaksbr }}</td>
+                        </tr>
+                        {% if record.admin_note %}
+                        <tr>
+                            <th class="text-muted fw-normal">មតិយោបល់ Admin</th>
+                            <td>{{ record.admin_note|linebreaksbr }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                {% if record.borrow_status == 'Pending' %}
+                <hr>
+                <div class="d-flex gap-2">
+                    <form method="POST" action="{% url 'approve_borrow' record.pk %}" class="flex-fill">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'dashboard' %}">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-lg me-1"></i>អនុម័តការខ្ចី
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'reject_borrow' record.pk %}" class="flex-fill"
+                        onsubmit="return confirm('តើអ្នកប្រាកដថាចង់បដិសេធសំណើនេះមែនទេ?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'dashboard' %}">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-lg me-1"></i>បដិសេធ
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <hr>
+                <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i>កំណត់ត្រានេះត្រូវបានដោះស្រាយរួចហើយ។</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

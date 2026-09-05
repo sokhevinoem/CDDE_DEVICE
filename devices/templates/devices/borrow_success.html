@@ -1,0 +1,23 @@
+{% extends "devices/base.html" %}
+{% block title %}ជោគជ័យ{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="card shadow-soft text-center p-4 p-md-5" style="max-width: 500px;">
+        <div class="mx-auto mb-3 rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center"
+            style="width:72px;height:72px;">
+            <i class="bi bi-check-lg text-success" style="font-size: 2.2rem;"></i>
+        </div>
+        <h2 class="text-success mb-2">ជោគជ័យ!</h2>
+        <p class="fs-6 text-muted">ព័ត៌មានការស្នើសុំខ្ចីឧបករណ៍របស់អ្នកត្រូវបានផ្ញើទៅ Admin រួចរាល់។ សូមរង់ចាំការអនុម័តមុននឹងអាចមករើកយកឧបករណ៍បាន។</p>
+        <div class="d-grid gap-2 mt-3">
+            <a href="{% url 'borrow_device' %}" class="btn btn-brand">
+                <i class="bi bi-plus-lg me-1"></i>បំពេញការស្នើសុំថ្មី
+            </a>
+            <a href="{% url 'borrow_list_return' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-list-check me-1"></i>មើលបញ្ជីកំពុងខ្ចី
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
