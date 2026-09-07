@@ -68,10 +68,10 @@
                         <td>{{ device.model|default:"-" }}</td>
                         <td>{{ device.serial_number|default:"-" }}</td>
                         <td>{{ device.capacity|default:"-" }}</td>
-                        <td><span class="badge badge-status {{ device.status|device_status_badge }}">{{
-                                device.get_status_display }}</span></td>
-                        <td><span class="badge badge-status {{ device.has_data|has_data_badge }}">{{
-                                device.get_has_data_display }}</span></td>
+                        <td><span class="badge badge-status {{ device.status|device_status_badge }}">
+                            {{ device.get_status_display }}</span></td>
+                        <td><span class="badge badge-status {{ device.has_data|has_data_badge }}">
+                            {{ device.get_has_data_display }}</span></td>
                         <td class="text-end pe-3">
                             <a href="{% url 'device_edit' device.pk %}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil-square"></i>
