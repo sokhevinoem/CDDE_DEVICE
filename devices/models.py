@@ -9,12 +9,18 @@ class Device(models.Model):
         ('Maintenance', 'កំពុងជួសជុល'),
     ]
 
+    HAS_DATA_CHOICES = [
+        ('Yes', 'មានទិន្នន័យ'),
+        ('No', 'មិនមានទិន្នន័យ'),
+    ]
+
     device_name = models.CharField(max_length=255, verbose_name="ឈ្មោះឧបករណ៍")
     device_image = models.ImageField(upload_to='device_photos/', null=True, blank=True, verbose_name="រូបភាពឧបករណ៍")
     serial_number = models.CharField(max_length=100, unique=True, blank=True, null=True, verbose_name="លេខស៊េរី (Serial Number)")
     model = models.CharField(max_length=100, blank=True, null=True, verbose_name="ម៉ូឌែល")
     capacity = models.CharField(max_length=50, blank=True, null=True, verbose_name="ទំហំផ្ទុក")
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Available', verbose_name="ស្ថានភាព")
+    has_data = models.CharField(max_length=10, choices=HAS_DATA_CHOICES, default='No', verbose_name="ស្ថានភាពទិន្នន័យ")
 
     class Meta:
         ordering = ['device_name']

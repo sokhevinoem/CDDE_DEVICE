@@ -46,6 +46,7 @@
                         <th>លេខស៊េរី</th>
                         <th>ទំហំផ្ទុក</th>
                         <th>ស្ថានភាព</th>
+                        <th>ទិន្នន័យ</th>
                         <th class="text-end pe-3">សកម្មភាព</th>
                     </tr>
                 </thead>
@@ -67,7 +68,10 @@
                         <td>{{ device.model|default:"-" }}</td>
                         <td>{{ device.serial_number|default:"-" }}</td>
                         <td>{{ device.capacity|default:"-" }}</td>
-                        <td><span class="badge badge-status {{ device.status|device_status_badge }}">{{ device.get_status_display }}</span></td>
+                        <td><span class="badge badge-status {{ device.status|device_status_badge }}">{{
+                                device.get_status_display }}</span></td>
+                        <td><span class="badge badge-status {{ device.has_data|has_data_badge }}">{{
+                                device.get_has_data_display }}</span></td>
                         <td class="text-end pe-3">
                             <a href="{% url 'device_edit' device.pk %}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil-square"></i>
@@ -79,7 +83,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center text-muted p-5">
+                        <td colspan="8" class="text-center text-muted p-5">
                             <i class="bi bi-inbox fs-2 d-block mb-2"></i>មិនមានឧបករណ៍ត្រូវនឹងលក្ខខណ្ឌនេះទេ
                         </td>
                     </tr>

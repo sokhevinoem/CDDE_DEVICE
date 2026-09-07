@@ -85,7 +85,7 @@ class DeviceForm(forms.ModelForm):
 
     class Meta:
         model = Device
-        fields = ['device_name', 'device_image', 'model', 'serial_number', 'capacity', 'status']
+        fields = ['device_name', 'device_image', 'model', 'serial_number', 'capacity', 'status', 'has_data']
         widgets = {
             'device_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ឧ. Seagate External HDD'}),
             'device_image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
@@ -93,6 +93,7 @@ class DeviceForm(forms.ModelForm):
             'serial_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ឧ. SN-00123'}),
             'capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ឧ. 1TB'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
+            'has_data': forms.Select(attrs={'class': 'form-select'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -104,6 +105,7 @@ class DeviceForm(forms.ModelForm):
         self.fields['serial_number'].label = "លេខស៊េរី (Serial Number)"
         self.fields['capacity'].label = "ទំហំផ្ទុក"
         self.fields['status'].label = "ស្ថានភាព"
+        self.fields['has_data'].label = "ស្ថានភាពទិន្នន័យ"
 
 
 class BorrowLogAdminForm(forms.ModelForm):
