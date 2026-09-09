@@ -1,10 +1,9 @@
 from django.db import models
 
-
 class Device(models.Model):
-name = models.CharField(max_length=100)
-    # Correct: Uses default storage (Cloudinary) automatically
+    name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='devices/', blank=True, null=True)
+    # Add your remaining model fields here with proper indentation
 
     STATUS_CHOICES = [
         ('Available', 'ទំនេរ'),
