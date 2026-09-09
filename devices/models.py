@@ -2,6 +2,10 @@ from django.db import models
 
 
 class Device(models.Model):
+name = models.CharField(max_length=100)
+    # Correct: Uses default storage (Cloudinary) automatically
+    image = models.ImageField(upload_to='devices/', blank=True, null=True)
+
     STATUS_CHOICES = [
         ('Available', 'ទំនេរ'),
         ('Reserved', 'កំពុងរង់ចាំការអនុម័ត'),

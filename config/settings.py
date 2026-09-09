@@ -75,18 +75,16 @@ TEMPLATES = [
 # Cloudinary Credentials (replace values with your actual keys from Cloudinary)
 # Cloudinary Credentials
 # Cloudinary Configuration
+# Cloudinary Storage Configuration
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'hjpdxi5a'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '359825272885265'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'jjJLgiNScc7GcC7UU1HZWlEHJns'),
-    'STATICFILES_MANIFEST_ROOT': None,
 }
 
-# Tell Cloudinary to NOT handle static files
+# Set Cloudinary as the backend
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# Modern Django 4.2+ / 6.x Storage Settings
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -96,7 +94,6 @@ STORAGES = {
     },
 }
 
-# Media Settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
